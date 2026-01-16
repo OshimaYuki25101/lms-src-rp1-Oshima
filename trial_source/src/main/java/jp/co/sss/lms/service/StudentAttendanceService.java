@@ -53,7 +53,7 @@ public class StudentAttendanceService {
 	 */
 	public List<AttendanceManagementDto> getAttendanceManagement(Integer courseId,
 			Integer lmsUserId) {
-
+		
 		// 勤怠管理リストの取得
 		List<AttendanceManagementDto> attendanceManagementDtoList = tStudentAttendanceMapper
 				.getAttendanceManagement(courseId, lmsUserId, Constants.DB_FLG_FALSE);
@@ -334,4 +334,15 @@ public class StudentAttendanceService {
 		return messageUtil.getMessage(Constants.PROP_KEY_ATTENDANCE_UPDATE_NOTICE);
 	}
 
+	/**
+	 * 勤怠未入力チェック
+	 * 
+	 * @author 大嶋悠暉
+	 * 
+	 */
+	public Integer count(Integer lmsUserId, Integer deleteFlg, Date getTrainingDate) {
+		Integer nullCount=tStudentAttendanceMapper.count(lmsUserId, deleteFlg, getTrainingDate);
+		
+		return nullCount;
+	}
 }

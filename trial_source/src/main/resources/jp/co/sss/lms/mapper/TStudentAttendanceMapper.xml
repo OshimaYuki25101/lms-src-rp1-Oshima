@@ -39,6 +39,19 @@
 			AND t1.delete_flg = #{deleteFlg}
 		ORDER BY t2.date ASC
 	</select>
+	
+	<select id="count" resultType="int">
+		SELECT
+			COUNT (*)
+		FROM
+			t_student_attendance
+		WHERE
+			lms_user_id = #{lmsUserId}
+			AND delete_flg = 0
+			AND training_date &lt; #{getTrainingDate}
+			AND training_start_time = ' ' OR training_end_time = ' ' OR training_start_time IS NULL
+			OR  training_end_time IS NULL
+	</select>
 
 	<insert id="insert" parameterType="jp.co.sss.lms.entity.TStudentAttendance" useGeneratedKeys="true" keyProperty="studentAttendanceId">
 		INSERT INTO t_student_attendance 

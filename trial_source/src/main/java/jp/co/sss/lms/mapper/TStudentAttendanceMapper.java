@@ -64,5 +64,13 @@ public interface TStudentAttendanceMapper {
 	 * @return 更新結果
 	 */
 	Boolean update(TStudentAttendance tStudentAttendance);
+	
+	/**
+	 * 勤怠情報（受講生入力）未入力件数取得
+	 * 
+	 * @author 大嶋悠暉
+	 * @return 件数
+	 */
+	Integer count(@Param("lmsUserId") Integer lmsUserId,Integer deleteFlag,Date getTrainingDate);
 
 }
