@@ -24,6 +24,17 @@ public class DailyAttendanceForm {
 	private Integer blankTime;
 	/** 中抜け時間（画面表示用） */
 	private String blankTimeValue;
+	/**
+	 * @author 大嶋悠暉
+	 */
+	/**	出勤(時)*/
+	private Integer trainingStartTimeHour;
+	/** 出勤(分)*/
+	private Integer trainingStartTimeMinute;
+	/** 退勤(時)*/
+	private Integer trainingEndTimeHour;
+	/** 退勤(分)*/
+	private Integer trainingEndTimeMinute;
 	/** ステータス */
 	private String status;
 	/** 備考 */

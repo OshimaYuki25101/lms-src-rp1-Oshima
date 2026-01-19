@@ -131,6 +131,85 @@ public class AttendanceUtil {
 		}
 		return map;
 	}
+	
+	/**
+	 * @author 大嶋悠暉
+	 * 
+	 * 時用のプルダウン
+	 * 
+	 * @return　時
+	 */
+	public LinkedHashMap<Integer,String> getHourMap(){
+		LinkedHashMap<Integer, String> hourMap = new LinkedHashMap<>();
+		hourMap.put(null, "");
+		for (int i = 0; i < 24;) {
+			String time;
+			if(0<=i||i<10) {
+				time="0"+i;
+			}else {
+				time=Integer.toString(i);
+			}
+
+			hourMap.put(i, time);
+			i ++;
+		}
+		return hourMap;
+	}
+	
+	/**
+	 * @author 大嶋悠暉
+	 * 分用のプルダウン
+	 * @return　分
+	 */
+	
+	public LinkedHashMap<Integer,String> getMinuteMap(){
+		LinkedHashMap<Integer, String> minuteMap = new LinkedHashMap<>();
+		minuteMap.put(null, "");
+		for (int i = 0; i < 60;) {
+			String time;
+			if(0<=i||i<=9) {
+				time="0"+i;
+			}else {
+				time=Integer.toString(i);
+			}
+			
+			minuteMap.put(i, time);
+			i ++;
+		}
+		return minuteMap;
+	}
+	
+	/**
+	 * @author 大嶋悠暉
+	 * 
+	 * 時間(時)の抜き取り
+	 */
+	public Integer getHour(String trainingTime) {
+		Integer trainingHour;
+		if(0<trainingTime.length()) {
+		String hour=trainingTime.substring(0, 2);
+		trainingHour=Integer.parseInt(hour);
+		}else {
+			trainingHour=Integer.parseInt(trainingTime);
+		}
+		return trainingHour;
+	}
+	
+	/**
+	 * @author 大嶋悠暉
+	 * 
+	 * 時間(分)の抜き取り
+	 */
+	public Integer getMinute(String trainingTime) {
+		Integer trainingMinute;
+		if(0<trainingTime.length()) {
+		String miute=trainingTime.substring(3, 5);
+		trainingMinute=Integer.parseInt(miute);
+		}else {
+			trainingMinute=Integer.parseInt(trainingTime);
+		}
+		return trainingMinute;
+	}
 
 	/**
 	 * 研修日の判定
