@@ -29,12 +29,20 @@ public class DailyAttendanceForm {
 	 */
 	/**	出勤(時)*/
 	private Integer trainingStartTimeHour;
+	/**出勤時間(時)(画面表示用)*/
+	private String trainingStartTimeHourValue;
 	/** 出勤(分)*/
 	private Integer trainingStartTimeMinute;
+	/**出勤時間(分)(画面表示用)*/
+	private String trainingStartTimeMinuteValue;
 	/** 退勤(時)*/
 	private Integer trainingEndTimeHour;
+	/**退勤時間(時)(画面表示用)*/
+	private String trainingEndTimeHourValue;
 	/** 退勤(分)*/
 	private Integer trainingEndTimeMinute;
+	/**退勤時間(分)(画面表示用)*/
+	private String trainingEndTimeMinuteValue;
 	/** ステータス */
 	private String status;
 	/** 備考 */

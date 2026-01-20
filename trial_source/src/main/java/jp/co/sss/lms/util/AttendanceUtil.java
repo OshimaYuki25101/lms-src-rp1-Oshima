@@ -3,6 +3,7 @@ package jp.co.sss.lms.util;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -144,7 +145,7 @@ public class AttendanceUtil {
 		hourMap.put(null, "");
 		for (int i = 0; i < 24;) {
 			String time;
-			if(0<=i||i<10) {
+			if(0<=i&&i<10) {
 				time="0"+i;
 			}else {
 				time=Integer.toString(i);
@@ -167,7 +168,7 @@ public class AttendanceUtil {
 		minuteMap.put(null, "");
 		for (int i = 0; i < 60;) {
 			String time;
-			if(0<=i||i<=9) {
+			if(0<=i&&i<=9) {
 				time="0"+i;
 			}else {
 				time=Integer.toString(i);
@@ -186,11 +187,11 @@ public class AttendanceUtil {
 	 */
 	public Integer getHour(String trainingTime) {
 		Integer trainingHour;
-		if(0<trainingTime.length()) {
+		if(!Objects.equals(trainingTime, null)&& !trainingTime.equals("")) {
 		String hour=trainingTime.substring(0, 2);
 		trainingHour=Integer.parseInt(hour);
 		}else {
-			trainingHour=Integer.parseInt(trainingTime);
+			trainingHour=null;
 		}
 		return trainingHour;
 	}
@@ -202,11 +203,11 @@ public class AttendanceUtil {
 	 */
 	public Integer getMinute(String trainingTime) {
 		Integer trainingMinute;
-		if(0<trainingTime.length()) {
+		if(!Objects.equals(trainingTime, null)&& !trainingTime.equals("")) {
 		String miute=trainingTime.substring(3, 5);
 		trainingMinute=Integer.parseInt(miute);
 		}else {
-			trainingMinute=Integer.parseInt(trainingTime);
+			trainingMinute=null;
 		}
 		return trainingMinute;
 	}

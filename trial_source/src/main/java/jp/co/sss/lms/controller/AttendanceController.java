@@ -1,9 +1,12 @@
 package jp.co.sss.lms.controller;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import jp.co.sss.lms.dto.AttendanceManagementDto;
 import jp.co.sss.lms.dto.LoginUserDto;
 import jp.co.sss.lms.form.AttendanceForm;
+import jp.co.sss.lms.form.DailyAttendanceForm;
 import jp.co.sss.lms.service.StudentAttendanceService;
 import jp.co.sss.lms.util.Constants;
 
@@ -45,7 +49,7 @@ public class AttendanceController {
 	 * @Date 2026/01/16
 	 */
 	@RequestMapping(path = "/detail", method = RequestMethod.GET)
-	public String index(Model model) {
+	public String index(Model model) throws ParseException {
 
 		
 		// 勤怠一覧の取得
@@ -54,8 +58,11 @@ public class AttendanceController {
 		model.addAttribute("attendanceManagementDtoList", attendanceManagementDtoList);
 		
 		Date getTrainingDate=new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
+		String dateStr = sdf.format(getTrainingDate);
+		Date dateOnly = sdf.parse(dateStr);
 		boolean notEnterFlg=false;
-		Integer count=studentAttendanceService.count(loginUserDto.getLmsUserId(), 0,getTrainingDate);
+		Integer count=studentAttendanceService.count(loginUserDto.getLmsUserId(), 0,dateOnly);
 		if(count>0) {
 			notEnterFlg=true;
 		}
@@ -146,6 +153,21 @@ public class AttendanceController {
 	public String complete(AttendanceForm attendanceForm, Model model, BindingResult result)
 			throws ParseException {
 
+		List<DailyAttendanceForm> dailyAttendance=new ArrayList<DailyAttendanceForm>();
+		for(DailyAttendanceForm form:attendanceForm.getAttendanceList()) {
+			if(form.getTrainingStartTimeHour()==null&&form.getTrainingStartTimeMinute()==null) {
+				form.setTrainingStartTime(null);
+			}else {
+				form.setTrainingStartTime(form.getTrainingStartTimeHour()+":"+form.getTrainingStartTimeMinute());
+			}
+			if(form.getTrainingEndTimeHour()==null&&form.getTrainingEndTimeMinute()==null) {
+				form.setTrainingEndTime(null);
+			}else {
+				form.setTrainingEndTime(form.getTrainingEndTimeHour()+":"+form.getTrainingEndTimeMinute());
+			}
+			dailyAttendance.add(form);
+		}
+		BeanUtils.copyProperties(attendanceForm, dailyAttendance);
 		// 更新
 		String message = studentAttendanceService.update(attendanceForm);
 		model.addAttribute("message", message);
