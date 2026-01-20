@@ -48,9 +48,10 @@
 		WHERE
 			lms_user_id = #{lmsUserId}
 			AND delete_flg = 0
+			AND status != 1
 			AND training_date &lt; #{getTrainingDate}
-			AND training_start_time = '' OR training_end_time = '' OR training_start_time IS NULL
-			OR  training_end_time IS NULL
+			AND( training_start_time = '' OR training_end_time = '' OR training_start_time IS NULL
+			OR  training_end_time IS NULL)
 	</select>
 
 	<insert id="insert" parameterType="jp.co.sss.lms.entity.TStudentAttendance" useGeneratedKeys="true" keyProperty="studentAttendanceId">

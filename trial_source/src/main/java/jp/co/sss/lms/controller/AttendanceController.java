@@ -62,7 +62,7 @@ public class AttendanceController {
 		String dateStr = sdf.format(getTrainingDate);
 		Date dateOnly = sdf.parse(dateStr);
 		boolean notEnterFlg=false;
-		Integer count=studentAttendanceService.count(loginUserDto.getLmsUserId(), 0,dateOnly);
+		Integer count=studentAttendanceService.count(loginUserDto.getLmsUserId(),dateOnly);
 		if(count>0) {
 			notEnterFlg=true;
 		}
@@ -176,6 +176,17 @@ public class AttendanceController {
 				.getAttendanceManagement(loginUserDto.getCourseId(), loginUserDto.getLmsUserId());
 		model.addAttribute("attendanceManagementDtoList", attendanceManagementDtoList);
 
+		Date getTrainingDate=new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
+		String dateStr = sdf.format(getTrainingDate);
+		Date dateOnly = sdf.parse(dateStr);
+		boolean notEnterFlg=false;
+		Integer count=studentAttendanceService.count(loginUserDto.getLmsUserId(),dateOnly);
+		if(count>0) {
+			notEnterFlg=true;
+		}
+		model.addAttribute("notEnterFlg",notEnterFlg);
+		
 		return "attendance/detail";
 	}
 
