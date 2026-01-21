@@ -184,6 +184,7 @@ public class AttendanceUtil {
 	 * @author 大嶋悠暉
 	 * 
 	 * 時間(時)の抜き取り
+	 * @return trainingHour
 	 */
 	public Integer getHour(String trainingTime) {
 		Integer trainingHour;
@@ -200,6 +201,7 @@ public class AttendanceUtil {
 	 * @author 大嶋悠暉
 	 * 
 	 * 時間(分)の抜き取り
+	 * @return trainingMinute
 	 */
 	public Integer getMinute(String trainingTime) {
 		Integer trainingMinute;

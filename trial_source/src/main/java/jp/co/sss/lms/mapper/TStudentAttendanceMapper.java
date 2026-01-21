@@ -71,6 +71,6 @@ public interface TStudentAttendanceMapper {
 	 * @author 大嶋悠暉
 	 * @return 件数
 	 */
-	Integer count(@Param("lmsUserId") Integer lmsUserId,Date getTrainingDate);
+	Integer notEnterCount(@Param("lmsUserId") Integer lmsUserId,Date trainingDate);
 
 }

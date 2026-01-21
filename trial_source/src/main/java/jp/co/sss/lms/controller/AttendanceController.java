@@ -47,6 +47,7 @@ public class AttendanceController {
 	 * 
 	 * @author 大嶋悠暉-Task25
 	 * @Date 2026/01/16
+	 * fix:未入力件数を調べるコードを追加
 	 */
 	@RequestMapping(path = "/detail", method = RequestMethod.GET)
 	public String index(Model model) throws ParseException {
@@ -57,12 +58,20 @@ public class AttendanceController {
 				.getAttendanceManagement(loginUserDto.getCourseId(), loginUserDto.getLmsUserId());
 		model.addAttribute("attendanceManagementDtoList", attendanceManagementDtoList);
 		
-		Date getTrainingDate=new Date();
+		//simpleDateFormatの設定
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
+		//本日の日付を取得
+		Date getTrainingDate=new Date();
+		//本日の日付をフォーマットに則った形に変化
 		String dateStr = sdf.format(getTrainingDate);
-		Date dateOnly = sdf.parse(dateStr);
+		//上のString型をDate型にし、比較できるようにする
+		Date trainingDate = sdf.parse(dateStr);
+		//本日までの未入力件数をカウント
+		Integer count=studentAttendanceService.notEnterCount(loginUserDto.getLmsUserId(),trainingDate);
+		
+		//アラート用のフラグ
 		boolean notEnterFlg=false;
-		Integer count=studentAttendanceService.count(loginUserDto.getLmsUserId(),dateOnly);
+		//countが1以上ならフラグをtrueにする
 		if(count>0) {
 			notEnterFlg=true;
 		}
@@ -148,11 +157,17 @@ public class AttendanceController {
 	 * @param result
 	 * @return 勤怠管理画面
 	 * @throws ParseException
+	 * 
 	 */
 	@RequestMapping(path = "/update", params = "complete", method = RequestMethod.POST)
 	public String complete(AttendanceForm attendanceForm, Model model, BindingResult result)
 			throws ParseException {
 
+		/**
+		 *  @author 大嶋悠暉
+	     * プルダウンによる勤怠時間の変更
+		 */
+		//再セット用のリストを生成
 		List<DailyAttendanceForm> dailyAttendance=new ArrayList<DailyAttendanceForm>();
 		for(DailyAttendanceForm form:attendanceForm.getAttendanceList()) {
 			if(form.getTrainingStartTimeHour()==null&&form.getTrainingStartTimeMinute()==null) {
@@ -168,6 +183,7 @@ public class AttendanceController {
 			dailyAttendance.add(form);
 		}
 		BeanUtils.copyProperties(attendanceForm, dailyAttendance);
+		
 		// 更新
 		String message = studentAttendanceService.update(attendanceForm);
 		model.addAttribute("message", message);
@@ -176,12 +192,17 @@ public class AttendanceController {
 				.getAttendanceManagement(loginUserDto.getCourseId(), loginUserDto.getLmsUserId());
 		model.addAttribute("attendanceManagementDtoList", attendanceManagementDtoList);
 
+		/**
+		 * @author 大嶋悠暉
+		 * 
+		 * 再度勤怠漏れがないかの確認
+		 */
 		Date getTrainingDate=new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
 		String dateStr = sdf.format(getTrainingDate);
 		Date dateOnly = sdf.parse(dateStr);
 		boolean notEnterFlg=false;
-		Integer count=studentAttendanceService.count(loginUserDto.getLmsUserId(),dateOnly);
+		Integer count=studentAttendanceService.notEnterCount(loginUserDto.getLmsUserId(),dateOnly);
 		if(count>0) {
 			notEnterFlg=true;
 		}

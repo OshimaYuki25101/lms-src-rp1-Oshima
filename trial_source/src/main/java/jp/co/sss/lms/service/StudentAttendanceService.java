@@ -360,8 +360,8 @@ public class StudentAttendanceService {
 	 * @author 大嶋悠暉
 	 * 
 	 */
-	public Integer count(Integer lmsUserId, Date getTrainingDate) {
-		Integer nullCount=tStudentAttendanceMapper.count(lmsUserId, getTrainingDate);
+	public Integer notEnterCount(Integer lmsUserId, Date trainingDate) {
+		Integer nullCount=tStudentAttendanceMapper.notEnterCount(lmsUserId, trainingDate);
 		
 		return nullCount;
 	}
