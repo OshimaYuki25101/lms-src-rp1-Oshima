@@ -358,4 +358,22 @@ public class StudentAttendanceService {
 		
 		return nullCount;
 	}
+	
+	public void formatConversion(AttendanceForm attendanceForm) {
+		List<DailyAttendanceForm> dailyAttendance=new ArrayList<DailyAttendanceForm>();
+		for(DailyAttendanceForm form:attendanceForm.getAttendanceList()) {
+			if(form.getTrainingStartTimeHour()==null&&form.getTrainingStartTimeMinute()==null) {
+				form.setTrainingStartTime(null);
+			}else {
+				form.setTrainingStartTime(form.getTrainingStartTimeHour()+":"+form.getTrainingStartTimeMinute());
+			}
+			if(form.getTrainingEndTimeHour()==null&&form.getTrainingEndTimeMinute()==null) {
+				form.setTrainingEndTime(null);
+			}else {
+				form.setTrainingEndTime(form.getTrainingEndTimeHour()+":"+form.getTrainingEndTimeMinute());
+			}
+			dailyAttendance.add(form);
+		}
+		BeanUtils.copyProperties(attendanceForm, dailyAttendance);
+	}
 }

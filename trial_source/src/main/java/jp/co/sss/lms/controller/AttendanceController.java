@@ -2,11 +2,9 @@ package jp.co.sss.lms.controller;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import jp.co.sss.lms.dto.AttendanceManagementDto;
 import jp.co.sss.lms.dto.LoginUserDto;
 import jp.co.sss.lms.form.AttendanceForm;
-import jp.co.sss.lms.form.DailyAttendanceForm;
 import jp.co.sss.lms.service.StudentAttendanceService;
 import jp.co.sss.lms.util.Constants;
 
@@ -166,22 +163,7 @@ public class AttendanceController {
 			throws ParseException {
 
 		//大嶋悠暉　Task26
-		List<DailyAttendanceForm> dailyAttendance=new ArrayList<DailyAttendanceForm>();
-		for(DailyAttendanceForm form:attendanceForm.getAttendanceList()) {
-			if(form.getTrainingStartTimeHour()==null&&form.getTrainingStartTimeMinute()==null) {
-				form.setTrainingStartTime(null);
-			}else {
-				form.setTrainingStartTime(form.getTrainingStartTimeHour()+":"+form.getTrainingStartTimeMinute());
-			}
-			if(form.getTrainingEndTimeHour()==null&&form.getTrainingEndTimeMinute()==null) {
-				form.setTrainingEndTime(null);
-			}else {
-				form.setTrainingEndTime(form.getTrainingEndTimeHour()+":"+form.getTrainingEndTimeMinute());
-			}
-			dailyAttendance.add(form);
-		}
-		BeanUtils.copyProperties(attendanceForm, dailyAttendance);
-		
+		studentAttendanceService.formatConversion(attendanceForm);
 		// 更新
 		String message = studentAttendanceService.update(attendanceForm);
 		model.addAttribute("message", message);
