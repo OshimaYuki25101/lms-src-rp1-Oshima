@@ -40,6 +40,7 @@
 		ORDER BY t2.date ASC
 	</select>
 	
+	<!-- 大嶋悠暉　Task25 -->
 	<select id="notEnterCount" resultType="int">
 		SELECT
 			COUNT (*)

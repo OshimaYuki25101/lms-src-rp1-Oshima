@@ -23,6 +23,7 @@
 
 			<form th:action="@{/attendance/update}" method="post">
 				<table class="table table-hover dataTable no-footer">
+					<!--大嶋悠暉　Task29-->
 					<thead style="display: block;">
 						<tr>
 							<th class="w140">日付</th>
@@ -34,7 +35,7 @@
 							<th class="w140">備考</th>
 						</tr>
 					</thead>
-					
+					<!--大嶋悠暉　Task29-->
 					<tbody style="display: block; overflow-y: scroll; height: 560px;">
 						<th:block th:each="dailyAttendanceForm, stat : *{attendanceForm.attendanceList}">
 							<tr>
@@ -48,7 +49,7 @@
 								</th:block>
 								<td class="w140">[[${dailyAttendanceForm.dispTrainingDate}]]</td>
 								<td class="w300">[[${dailyAttendanceForm.sectionName}]]</td>
-								<!--大嶋　Task26-->
+								<!--大嶋悠暉　Task26-->
 								<td class="w70">
 									<select th:name="|attendanceList[${stat.index}].trainingStartTimeHour|" class="form-control" >
 									<option th:each="hourTime : ${attendanceForm.hourTime}" th:value="${hourTime.key}" th:inlne="text" class="form-control" 

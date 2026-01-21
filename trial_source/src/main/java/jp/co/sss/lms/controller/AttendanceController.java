@@ -58,6 +58,7 @@ public class AttendanceController {
 				.getAttendanceManagement(loginUserDto.getCourseId(), loginUserDto.getLmsUserId());
 		model.addAttribute("attendanceManagementDtoList", attendanceManagementDtoList);
 		
+		//大嶋悠暉　Task25
 		//simpleDateFormatの設定
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy年M月d日(E)");
 		//本日の日付を取得
@@ -76,6 +77,7 @@ public class AttendanceController {
 			notEnterFlg=true;
 		}
 		model.addAttribute("notEnterFlg",notEnterFlg);
+		
 		return "attendance/detail";
 	}
 
@@ -163,11 +165,7 @@ public class AttendanceController {
 	public String complete(AttendanceForm attendanceForm, Model model, BindingResult result)
 			throws ParseException {
 
-		/**
-		 *  @author 大嶋悠暉
-	     * プルダウンによる勤怠時間の変更
-		 */
-		//再セット用のリストを生成
+		//大嶋悠暉　Task26
 		List<DailyAttendanceForm> dailyAttendance=new ArrayList<DailyAttendanceForm>();
 		for(DailyAttendanceForm form:attendanceForm.getAttendanceList()) {
 			if(form.getTrainingStartTimeHour()==null&&form.getTrainingStartTimeMinute()==null) {
@@ -192,11 +190,7 @@ public class AttendanceController {
 				.getAttendanceManagement(loginUserDto.getCourseId(), loginUserDto.getLmsUserId());
 		model.addAttribute("attendanceManagementDtoList", attendanceManagementDtoList);
 
-		/**
-		 * @author 大嶋悠暉
-		 * 
-		 * 再度勤怠漏れがないかの確認
-		 */
+		//大嶋悠暉　Task26
 		Date getTrainingDate=new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
 		String dateStr = sdf.format(getTrainingDate);
