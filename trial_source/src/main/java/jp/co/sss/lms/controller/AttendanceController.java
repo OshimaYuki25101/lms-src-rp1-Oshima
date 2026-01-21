@@ -59,7 +59,7 @@ public class AttendanceController {
 		model.addAttribute("attendanceManagementDtoList", attendanceManagementDtoList);
 		
 		//simpleDateFormatの設定
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy年M月d日(E)");
 		//本日の日付を取得
 		Date getTrainingDate=new Date();
 		//本日の日付をフォーマットに則った形に変化

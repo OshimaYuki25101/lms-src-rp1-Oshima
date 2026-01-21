@@ -48,6 +48,7 @@
 								</th:block>
 								<td class="w140">[[${dailyAttendanceForm.dispTrainingDate}]]</td>
 								<td class="w300">[[${dailyAttendanceForm.sectionName}]]</td>
+								<!--大嶋　Task26-->
 								<td class="w70">
 									<select th:name="|attendanceList[${stat.index}].trainingStartTimeHour|" class="form-control" >
 									<option th:each="hourTime : ${attendanceForm.hourTime}" th:value="${hourTime.key}" th:inlne="text" class="form-control" 
@@ -78,6 +79,7 @@
 										       th:selected="${minuteTime.key == dailyAttendanceForm.trainingEndTimeMinute}">[[${minuteTime.value}]]</option>
 									</select>
 								</td>
+								<!--ここまでTask26-->
 								<td class="w80">
 									<select th:name="|attendanceList[${stat.index}].blankTime|" class="form-control">
 										<option th:each="blankTime : ${attendanceForm.blankTimes}" th:value="${blankTime.key}" th:inlne="text" class="form-control" 
