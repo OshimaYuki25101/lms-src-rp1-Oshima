@@ -4,10 +4,13 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 
 import jp.co.sss.lms.dto.AttendanceManagementDto;
 import jp.co.sss.lms.dto.LoginUserDto;
@@ -53,7 +56,7 @@ public class StudentAttendanceService {
 	 */
 	public List<AttendanceManagementDto> getAttendanceManagement(Integer courseId,
 			Integer lmsUserId) {
-		
+
 		// 勤怠管理リストの取得
 		List<AttendanceManagementDto> attendanceManagementDtoList = tStudentAttendanceMapper
 				.getAttendanceManagement(courseId, lmsUserId, Constants.DB_FLG_FALSE);
@@ -238,19 +241,25 @@ public class StudentAttendanceService {
 					.setStudentAttendanceId(attendanceManagementDto.getStudentAttendanceId());
 			dailyAttendanceForm
 					.setTrainingDate(dateUtil.toString(attendanceManagementDto.getTrainingDate()));
-			
+
 			//大嶋悠暉　Task26
 			dailyAttendanceForm
 					.setTrainingStartTimeHour(attendanceUtil.getHour(attendanceManagementDto.getTrainingStartTime()));
-			dailyAttendanceForm.setTrainingStartTimeHourValue(String.valueOf(attendanceUtil.getHour(attendanceManagementDto.getTrainingStartTime())));
-			dailyAttendanceForm.setTrainingStartTimeMinute(attendanceUtil.getMinute(attendanceManagementDto.getTrainingStartTime()));
-			dailyAttendanceForm.setTrainingStartTimeMinuteValue(String.valueOf(attendanceUtil.getMinute(attendanceManagementDto.getTrainingStartTime())));
-			dailyAttendanceForm.setTrainingEndTimeHour(attendanceUtil.getHour(attendanceManagementDto.getTrainingEndTime()));
-			dailyAttendanceForm.setTrainingEndTimeHourValue(String.valueOf(attendanceUtil.getHour(attendanceManagementDto.getTrainingEndTime())));
-			dailyAttendanceForm.setTrainingEndTimeMinute(attendanceUtil.getMinute(attendanceManagementDto.getTrainingEndTime()));
-			dailyAttendanceForm.setTrainingEndTimeMinuteValue(String.valueOf(attendanceUtil.getMinute(attendanceManagementDto.getTrainingEndTime())));
-			
-			
+			dailyAttendanceForm.setTrainingStartTimeHourValue(
+					String.valueOf(attendanceUtil.getHour(attendanceManagementDto.getTrainingStartTime())));
+			dailyAttendanceForm.setTrainingStartTimeMinute(
+					attendanceUtil.getMinute(attendanceManagementDto.getTrainingStartTime()));
+			dailyAttendanceForm.setTrainingStartTimeMinuteValue(
+					String.valueOf(attendanceUtil.getMinute(attendanceManagementDto.getTrainingStartTime())));
+			dailyAttendanceForm
+					.setTrainingEndTimeHour(attendanceUtil.getHour(attendanceManagementDto.getTrainingEndTime()));
+			dailyAttendanceForm.setTrainingEndTimeHourValue(
+					String.valueOf(attendanceUtil.getHour(attendanceManagementDto.getTrainingEndTime())));
+			dailyAttendanceForm
+					.setTrainingEndTimeMinute(attendanceUtil.getMinute(attendanceManagementDto.getTrainingEndTime()));
+			dailyAttendanceForm.setTrainingEndTimeMinuteValue(
+					String.valueOf(attendanceUtil.getMinute(attendanceManagementDto.getTrainingEndTime())));
+
 			if (attendanceManagementDto.getBlankTime() != null) {
 				dailyAttendanceForm.setBlankTime(attendanceManagementDto.getBlankTime());
 				dailyAttendanceForm.setBlankTimeValue(String.valueOf(
@@ -348,32 +357,99 @@ public class StudentAttendanceService {
 	}
 
 	/**
-	 * 勤怠未入力チェック
+	 * Task25/勤怠未入力チェック
 	 * 
 	 * @author 大嶋悠暉
+	 * @throws ParseException 
+	 * @return 未入力確認フラグ
 	 * 
 	 */
-	public Integer notEnterCount(Integer lmsUserId, Date trainingDate) {
-		Integer nullCount=tStudentAttendanceMapper.notEnterCount(lmsUserId, trainingDate);
-		
-		return nullCount;
+	public boolean notEnterCheck(Integer lmsUserId) throws ParseException {
+		Date trainingDate = attendanceUtil.getTrainingDate();
+		//ダイヤログ用のフラグ
+		boolean notEnterFlg = false;
+		//未入力件数のカウント
+		Integer notEnterCount = tStudentAttendanceMapper.notEnterCount(lmsUserId, Constants.DB_FLG_FALSE, trainingDate);
+		//もし未入力が1件でもあればフラグをtrueにする
+		if (notEnterCount > 0) {
+			notEnterFlg = true;
+		}
+
+		return notEnterFlg;
 	}
-	
+
+	/**
+	 * Task26/出勤・退勤時間をhh:mmの形に変更
+	 * @author 大嶋悠暉
+	 * 
+	 * @param attendanceForm
+	 */
 	public void formatConversion(AttendanceForm attendanceForm) {
-		List<DailyAttendanceForm> dailyAttendance=new ArrayList<DailyAttendanceForm>();
-		for(DailyAttendanceForm form:attendanceForm.getAttendanceList()) {
-			if(form.getTrainingStartTimeHour()==null&&form.getTrainingStartTimeMinute()==null) {
+		List<DailyAttendanceForm> dailyAttendance = new ArrayList<DailyAttendanceForm>();
+		for (DailyAttendanceForm form : attendanceForm.getAttendanceList()) {
+			if (form.getTrainingStartTimeHour() == null && form.getTrainingStartTimeMinute() == null) {
 				form.setTrainingStartTime(null);
-			}else {
-				form.setTrainingStartTime(form.getTrainingStartTimeHour()+":"+form.getTrainingStartTimeMinute());
+			} else {
+				form.setTrainingStartTime(form.getTrainingStartTimeHour() + ":" + form.getTrainingStartTimeMinute());
 			}
-			if(form.getTrainingEndTimeHour()==null&&form.getTrainingEndTimeMinute()==null) {
+			if (form.getTrainingEndTimeHour() == null && form.getTrainingEndTimeMinute() == null) {
 				form.setTrainingEndTime(null);
-			}else {
-				form.setTrainingEndTime(form.getTrainingEndTimeHour()+":"+form.getTrainingEndTimeMinute());
+			} else {
+				form.setTrainingEndTime(form.getTrainingEndTimeHour() + ":" + form.getTrainingEndTimeMinute());
 			}
 			dailyAttendance.add(form);
 		}
 		BeanUtils.copyProperties(attendanceForm, dailyAttendance);
+	}
+
+	
+	public void updateInputCheck(AttendanceForm attendanceForm, BindingResult result) {
+		for (DailyAttendanceForm form : attendanceForm.getAttendanceList()) {
+			if (form.getNote().length() > 100) {
+				String note = messageUtil.getMessage("note");
+				String length = "100";
+				result.addError(new FieldError(result.getObjectName(), "noteError",
+						messageUtil.getMessage("maxlength", new String[] { note, length })));
+			}
+			if ((form.getTrainingStartTimeHour() != null && form.getTrainingStartTimeMinute() == null) ||
+					(form.getTrainingStartTimeHour() == null && form.getTrainingStartTimeMinute() != null)) {
+				String trainingStartTime = messageUtil.getMessage("trainingStartTime");
+				result.addError(new FieldError(result.getObjectName(), "trainingStartTimeError",
+						messageUtil.getMessage("input.invalid", new String[] { trainingStartTime })));
+			}
+			if ((form.getTrainingEndTimeHour() != null && form.getTrainingEndTimeMinute() == null) ||
+					(form.getTrainingEndTimeHour() == null && form.getTrainingEndTimeMinute() != null)) {
+				String trainingEndTime = messageUtil.getMessage("trainingEndTime");
+				result.addError(new FieldError(result.getObjectName(), "trainingEndTimeError",
+						messageUtil.getMessage("input.invalid", new String[] { trainingEndTime })));
+			}
+			if (Objects.equals(form.getTrainingStartTime(),null) && !form.getTrainingEndTime().equals(null) ) {
+				result.addError(new FieldError(result.getObjectName(), "trainingTimeError",
+						messageUtil.getMessage(Constants.VALID_KEY_ATTENDANCE_PUNCHINEMPTY)));
+			} else {
+				if (form.getTrainingStartTimeHour() > form.getTrainingEndTimeHour()) {
+					String trainingStartTime = messageUtil.getMessage("trainingStartTime",
+							new String[] { form.getTrainingStartTime() });
+					String trainingEndTime = messageUtil.getMessage("trainingEndTime",
+							new String[] { form.getTrainingEndTime() });
+					result.addError(new FieldError(result.getObjectName(), "trainingTimeError", messageUtil.getMessage(
+							"attendance.trainingTimeRange", new String[] { trainingEndTime, trainingStartTime })));
+				}
+			}
+//			if (form.getBlankTime() != null) {
+//				int startTime = Integer.parseInt(form.getTrainingStartTime().toString().replace(":", ""));
+//				int endTime = Integer.parseInt(form.getTrainingEndTime().toString().replace(":", ""));
+//
+//				int startTimeMin = startTime / 100 * 60 + startTime % 100;
+//				int endTimeMin = endTime / 100 * 60 + endTime % 100;
+//				int diffMin = endTimeMin - startTimeMin;
+//				int total = endTimeMin - startTimeMin - diffMin;
+//
+//				if (total < form.getBlankTime()) {
+//					result.addError(new FieldError(result.getObjectName(), "blankTimeError",
+//							messageUtil.getMessage(Constants.VALID_KEY_ATTENDANCE_BLANKTIMEERROR)));
+//				}
+//			}
+		}
 	}
 }
