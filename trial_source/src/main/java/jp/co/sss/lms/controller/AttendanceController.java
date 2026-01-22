@@ -1,8 +1,6 @@
 package jp.co.sss.lms.controller;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,32 +47,17 @@ public class AttendanceController {
 	@RequestMapping(path = "/detail", method = RequestMethod.GET)
 	public String index(Model model) throws ParseException {
 
-		
 		// 勤怠一覧の取得
 		List<AttendanceManagementDto> attendanceManagementDtoList = studentAttendanceService
 				.getAttendanceManagement(loginUserDto.getCourseId(), loginUserDto.getLmsUserId());
 		model.addAttribute("attendanceManagementDtoList", attendanceManagementDtoList);
-		
+
 		//大嶋悠暉　Task25
-		//simpleDateFormatの設定
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy年M月d日(E)");
-		//本日の日付を取得
-		Date getTrainingDate=new Date();
-		//本日の日付をフォーマットに則った形に変化
-		String dateStr = sdf.format(getTrainingDate);
-		//上のString型をDate型にし、比較できるようにする
-		Date trainingDate = sdf.parse(dateStr);
-		//本日までの未入力件数をカウント
-		Integer count=studentAttendanceService.notEnterCount(loginUserDto.getLmsUserId(),trainingDate);
-		
 		//アラート用のフラグ
-		boolean notEnterFlg=false;
-		//countが1以上ならフラグをtrueにする
-		if(count>0) {
-			notEnterFlg=true;
-		}
-		model.addAttribute("notEnterFlg",notEnterFlg);
-		
+		boolean notEnterFlg = studentAttendanceService.notEnterCheck(loginUserDto.getLmsUserId());
+
+		model.addAttribute("notEnterFlg", notEnterFlg);
+
 		return "attendance/detail";
 	}
 
@@ -161,9 +144,22 @@ public class AttendanceController {
 	@RequestMapping(path = "/update", params = "complete", method = RequestMethod.POST)
 	public String complete(AttendanceForm attendanceForm, Model model, BindingResult result)
 			throws ParseException {
-
+		
 		//大嶋悠暉　Task26
 		studentAttendanceService.formatConversion(attendanceForm);
+		
+		studentAttendanceService.updateInputCheck(attendanceForm, result);
+		if (result.hasErrors()) {
+			// 勤怠管理リストの取得
+			List<AttendanceManagementDto> attendanceManagementDtoList = studentAttendanceService
+					.getAttendanceManagement(loginUserDto.getCourseId(), loginUserDto.getLmsUserId());
+			// 勤怠フォームの生成
+			attendanceForm = studentAttendanceService
+					.setAttendanceForm(attendanceManagementDtoList);
+			model.addAttribute("attendanceForm", attendanceForm);
+			return "attendance/update";
+		}
+
 		// 更新
 		String message = studentAttendanceService.update(attendanceForm);
 		model.addAttribute("message", message);
@@ -172,18 +168,6 @@ public class AttendanceController {
 				.getAttendanceManagement(loginUserDto.getCourseId(), loginUserDto.getLmsUserId());
 		model.addAttribute("attendanceManagementDtoList", attendanceManagementDtoList);
 
-		//大嶋悠暉　Task26
-		Date getTrainingDate=new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
-		String dateStr = sdf.format(getTrainingDate);
-		Date dateOnly = sdf.parse(dateStr);
-		boolean notEnterFlg=false;
-		Integer count=studentAttendanceService.notEnterCount(loginUserDto.getLmsUserId(),dateOnly);
-		if(count>0) {
-			notEnterFlg=true;
-		}
-		model.addAttribute("notEnterFlg",notEnterFlg);
-		
 		return "attendance/detail";
 	}
 
