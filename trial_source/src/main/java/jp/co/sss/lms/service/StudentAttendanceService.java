@@ -402,7 +402,6 @@ public class StudentAttendanceService {
 		BeanUtils.copyProperties(attendanceForm, dailyAttendance);
 	}
 
-	
 	public void updateInputCheck(AttendanceForm attendanceForm, BindingResult result) {
 		for (DailyAttendanceForm form : attendanceForm.getAttendanceList()) {
 			if (form.getNote().length() > 100) {
@@ -411,45 +410,49 @@ public class StudentAttendanceService {
 				result.addError(new FieldError(result.getObjectName(), "noteError",
 						messageUtil.getMessage("maxlength", new String[] { note, length })));
 			}
-			if ((form.getTrainingStartTimeHour() != null && form.getTrainingStartTimeMinute() == null) ||
-					(form.getTrainingStartTimeHour() == null && form.getTrainingStartTimeMinute() != null)) {
-				String trainingStartTime = messageUtil.getMessage("trainingStartTime");
-				result.addError(new FieldError(result.getObjectName(), "trainingStartTimeError",
-						messageUtil.getMessage("input.invalid", new String[] { trainingStartTime })));
-			}
-			if ((form.getTrainingEndTimeHour() != null && form.getTrainingEndTimeMinute() == null) ||
-					(form.getTrainingEndTimeHour() == null && form.getTrainingEndTimeMinute() != null)) {
-				String trainingEndTime = messageUtil.getMessage("trainingEndTime");
-				result.addError(new FieldError(result.getObjectName(), "trainingEndTimeError",
-						messageUtil.getMessage("input.invalid", new String[] { trainingEndTime })));
-			}
-			if (Objects.equals(form.getTrainingStartTime(),null) && !form.getTrainingEndTime().equals(null) ) {
-				result.addError(new FieldError(result.getObjectName(), "trainingTimeError",
-						messageUtil.getMessage(Constants.VALID_KEY_ATTENDANCE_PUNCHINEMPTY)));
-			} else {
-				if (form.getTrainingStartTimeHour() > form.getTrainingEndTimeHour()) {
-					String trainingStartTime = messageUtil.getMessage("trainingStartTime",
-							new String[] { form.getTrainingStartTime() });
-					String trainingEndTime = messageUtil.getMessage("trainingEndTime",
-							new String[] { form.getTrainingEndTime() });
-					result.addError(new FieldError(result.getObjectName(), "trainingTimeError", messageUtil.getMessage(
-							"attendance.trainingTimeRange", new String[] { trainingEndTime, trainingStartTime })));
+			if (!Objects.equals(form.getStatusDispName(), "欠席")) {
+				if ((form.getTrainingStartTimeHour() != null && form.getTrainingStartTimeMinute() == null) ||
+						(form.getTrainingStartTimeHour() == null && form.getTrainingStartTimeMinute() != null)) {
+					String trainingStartTime = messageUtil.getMessage("trainingStartTime");
+					result.addError(new FieldError(result.getObjectName(), "trainingStartTimeError",
+							messageUtil.getMessage("input.invalid", new String[] { trainingStartTime })));
+				}
+				if ((form.getTrainingEndTimeHour() != null && form.getTrainingEndTimeMinute() == null) ||
+						(form.getTrainingEndTimeHour() == null && form.getTrainingEndTimeMinute() != null)) {
+					String trainingEndTime = messageUtil.getMessage("trainingEndTime");
+					result.addError(new FieldError(result.getObjectName(), "trainingEndTimeError",
+							messageUtil.getMessage("input.invalid", new String[] { trainingEndTime })));
+				}
+				if (Objects.equals(form.getTrainingStartTime(), null) && !Objects.equals(form.getTrainingEndTime(), null)) {
+					result.addError(new FieldError(result.getObjectName(), "trainingTimeError",
+							messageUtil.getMessage(Constants.VALID_KEY_ATTENDANCE_PUNCHINEMPTY)));
+				} else {
+					if (form.getTrainingStartTimeHour() > form.getTrainingEndTimeHour()) {
+						String trainingStartTime = messageUtil.getMessage("trainingStartTime",
+								new String[] { form.getTrainingStartTime() });
+						String trainingEndTime = messageUtil.getMessage("trainingEndTime",
+								new String[] { form.getTrainingEndTime() });
+						result.addError(new FieldError(result.getObjectName(), "trainingTimeError",
+								messageUtil.getMessage(
+										"attendance.trainingTimeRange",
+										new String[] { trainingEndTime, trainingStartTime })));
+					}
+				}
+				if (form.getBlankTime() != null) {
+					int startTime = Integer.parseInt(form.getTrainingStartTime().toString().replace(":", ""));
+					int endTime = Integer.parseInt(form.getTrainingEndTime().toString().replace(":", ""));
+
+					int startTimeMin = startTime / 100 * 60 + startTime % 100;
+					int endTimeMin = endTime / 100 * 60 + endTime % 100;
+					int diffMin = endTimeMin - startTimeMin;
+					int total = endTimeMin - startTimeMin - diffMin;
+
+					if (total < form.getBlankTime()) {
+						result.addError(new FieldError(result.getObjectName(), "blankTimeError",
+								messageUtil.getMessage(Constants.VALID_KEY_ATTENDANCE_BLANKTIMEERROR)));
+					}
 				}
 			}
-//			if (form.getBlankTime() != null) {
-//				int startTime = Integer.parseInt(form.getTrainingStartTime().toString().replace(":", ""));
-//				int endTime = Integer.parseInt(form.getTrainingEndTime().toString().replace(":", ""));
-//
-//				int startTimeMin = startTime / 100 * 60 + startTime % 100;
-//				int endTimeMin = endTime / 100 * 60 + endTime % 100;
-//				int diffMin = endTimeMin - startTimeMin;
-//				int total = endTimeMin - startTimeMin - diffMin;
-//
-//				if (total < form.getBlankTime()) {
-//					result.addError(new FieldError(result.getObjectName(), "blankTimeError",
-//							messageUtil.getMessage(Constants.VALID_KEY_ATTENDANCE_BLANKTIMEERROR)));
-//				}
-//			}
 		}
 	}
 }
