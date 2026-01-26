@@ -4,6 +4,18 @@
 <head>
 	<meta charset="UTF-8">
 	<title>勤怠情報変更｜LMS</title>
+	<style>
+		ul.asterisk-list {
+			list-style: none;
+			/* デフォルトの黒丸を消す */
+			padding-left: 0;
+		}
+
+		ul.asterisk-list li::before {
+			content: "*";
+			padding-right: 5px;
+		}
+	</style>
 </head>
 
 <body>
@@ -24,8 +36,9 @@
 			<form name="form" th:action="@{/attendance/update}" method="post" th:object="${attendanceForm}"
 				onsubmit="return confirmSubmit()">
 				<div th:if="${#fields.hasErrors('*')}">
-					<ul style="padding-left: 0; list-style: none;">
-						<li th:each="error:${#fields.detailedErrors()}" th:text="${error.message}" style="color: red;"></li>
+					<ul class="asterisk-list">
+						<li th:each="error:${#fields.detailedErrors()}" th:text="${error.message}" style="color: red;">
+						</li>
 					</ul>
 				</div>
 				<table class="table table-hover dataTable no-footer">
@@ -153,11 +166,14 @@
 	</div>
 	<!--大嶋悠暉　Task27-->
 	<script>
-		document.getElementById('showMessage').addEventListener('click', function () {
+		document.getElementById('showMessage').addEventListener('click', function (e) {
 			// 1. アラート（または確認）を表示
-			if (confirm("更新します。よろしいですか？")) {
+			if (window.confirm("更新します。よろしいですか？")) {
 				// 2. OKが押されたらフォームを送信
 				document.form.submit();
+			} else {
+				e.preventDefault();
+				return false;
 			}
 		});
 	</script>

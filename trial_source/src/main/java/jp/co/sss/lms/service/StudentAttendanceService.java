@@ -390,12 +390,12 @@ public class StudentAttendanceService {
 			if (form.getTrainingStartTimeHour() == null && form.getTrainingStartTimeMinute() == null) {
 				form.setTrainingStartTime(null);
 			} else {
-				form.setTrainingStartTime(form.getTrainingStartTimeHour() + ":" + form.getTrainingStartTimeMinute());
+				form.setTrainingStartTime(String.format("%02d", form.getTrainingStartTimeHour()) + ":" + String.format("%02d", form.getTrainingStartTimeMinute()));
 			}
 			if (form.getTrainingEndTimeHour() == null && form.getTrainingEndTimeMinute() == null) {
 				form.setTrainingEndTime(null);
 			} else {
-				form.setTrainingEndTime(form.getTrainingEndTimeHour() + ":" + form.getTrainingEndTimeMinute());
+				form.setTrainingEndTime(String.format("%02d", form.getTrainingEndTimeHour()) + ":" + String.format("%02d", form.getTrainingEndTimeMinute()));
 			}
 			dailyAttendance.add(form);
 		}
@@ -413,64 +413,71 @@ public class StudentAttendanceService {
 		Integer count = attendanceForm.getAttendanceList().size();
 		for (int i = 0; i < count; i++) {
 			DailyAttendanceForm form = attendanceForm.getAttendanceList().get(i);
+			//備考の入力チェック
 			if (form.getNote().length() > 100) {
 				String note = messageUtil.getMessage("note");
 				String length = "100";
 				result.addError(new FieldError(result.getObjectName(), "attendanceList[" + i + "].note",
 						messageUtil.getMessage("maxlength", new String[] { note, length })));
 			}
+			//欠席じゃないかどうか
 			if (!Objects.equals(form.getStatusDispName(), "欠席")) {
+				//出勤時間の分が入力されていない
 				if (form.getTrainingStartTimeHour() != null && form.getTrainingStartTimeMinute() == null) {
 					String trainingStartTime = messageUtil.getMessage("trainingStartTime");
 					result.addError(
 							new FieldError(result.getObjectName(), "attendanceList[" + i + "].trainingStartTimeMinute",
 									messageUtil.getMessage("input.invalid", new String[] { trainingStartTime })));
 				}
+				//出勤時間の時が入力されていない
 				if (form.getTrainingStartTimeHour() == null && form.getTrainingStartTimeMinute() != null) {
 					String trainingStartTime = messageUtil.getMessage("trainingStartTime");
 					result.addError(
 							new FieldError(result.getObjectName(), "attendanceList[" + i + "].trainingStartTimeHour",
 									messageUtil.getMessage("input.invalid", new String[] { trainingStartTime })));
 				}
+				//退勤時間の分が入力されていない
 				if (form.getTrainingEndTimeHour() != null && form.getTrainingEndTimeMinute() == null) {
 					String trainingEndTime = messageUtil.getMessage("trainingEndTime");
 					result.addError(
 							new FieldError(result.getObjectName(), "attendanceList[" + i + "].trainingEndTimeMinute",
 									messageUtil.getMessage("input.invalid", new String[] { trainingEndTime })));
 				}
+				//退勤時間の時が入力されていない
 				if (form.getTrainingEndTimeHour() == null && form.getTrainingEndTimeMinute() != null) {
 					String trainingEndTime = messageUtil.getMessage("trainingEndTime");
 					result.addError(
 							new FieldError(result.getObjectName(), "attendanceList[" + i + "].trainingEndTimeHour",
 									messageUtil.getMessage("input.invalid", new String[] { trainingEndTime })));
 				}
+				//出勤時間が未入力で退勤時間が入力されている
 				if (Objects.equals(form.getTrainingStartTime(), null)
 						&& !Objects.equals(form.getTrainingEndTime(), null)) {
 					result.addError(
 							new FieldError(result.getObjectName(), "attendanceList[" + i + "].trainingStartTime",
 									messageUtil.getMessage(Constants.VALID_KEY_ATTENDANCE_PUNCHINEMPTY)));
 				} else {
-					if (!(Objects.equals(form.getTrainingStartTime(), null)
-							&& Objects.equals(form.getTrainingEndTime(), null))
-							&& (form.getTrainingStartTimeHour() > form.getTrainingEndTimeHour())) {
-						String trainingStartTime = messageUtil.getMessage("trainingStartTime",
-								new String[] { form.getTrainingStartTime() });
-						String trainingEndTime = messageUtil.getMessage("trainingEndTime",
-								new String[] { form.getTrainingEndTime() });
-						result.addError(
-								new FieldError(result.getObjectName(), "attendanceList[" + i + "].trainingStartTime",
-										messageUtil.getMessage(
-												"attendance.trainingTimeRange",
-												new String[] { trainingEndTime, trainingStartTime })));
+					//出勤時間が退勤時間を超えていないか
+					if (form.getTrainingStartTimeHour() != null&&form.getTrainingEndTimeHour()!=null) {
+						if (!(Objects.equals(form.getTrainingStartTime(), null)
+								&& Objects.equals(form.getTrainingEndTime(), null))
+								&& (form.getTrainingStartTimeHour() > form.getTrainingEndTimeHour())) {
+							result.addError(
+									new FieldError(result.getObjectName(),
+											"attendanceList[" + i + "].trainingStartTime",
+											messageUtil.getMessage(
+													"attendance.trainingTimeRange",
+													new String[] { form.getTrainingStartTime(),form.getTrainingEndTime() })));
+						}
 					}
 				}
+				//中抜け時間が勤怠時間を超えていないか
 				if (form.getBlankTime() != null) {
 					int startTime = Integer.parseInt(form.getTrainingStartTime().toString().replace(":", ""));
 					int endTime = Integer.parseInt(form.getTrainingEndTime().toString().replace(":", ""));
 
-					int startTimeMin = startTime * 60;
-					int endTimeMin = endTime * 60;
-					int total = endTimeMin - startTimeMin - 60;
+					int total = (endTime / 10) - (startTime / 10) - 1;
+					total = total * 60;
 
 					if (total < form.getBlankTime()) {
 						result.addError(new FieldError(result.getObjectName(), "attendanceList[" + i + "].blankTime",
