@@ -25,7 +25,7 @@
 				onsubmit="return confirmSubmit()">
 				<div th:if="${#fields.hasErrors('*')}">
 					<ul style="padding-left: 0; list-style: none;">
-						<li th:each="error:${#fields.detailedErrors()}" th:text="${error}"></li>
+						<li th:each="error:${#fields.detailedErrors()}" th:text="${error.message}" style="color: red;"></li>
 					</ul>
 				</div>
 				<table class="table table-hover dataTable no-footer">
