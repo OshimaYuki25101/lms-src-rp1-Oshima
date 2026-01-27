@@ -168,7 +168,7 @@
 		</form>
 	</div>
 
-	<!--大嶋悠暉　Task27-->
+	<!--大嶋悠暉　Task28-->
 	<script th:inline="javascript">
 		function setTime(index){
 			const startHour=document.getElementById('startTimeHour_'+index);
@@ -182,7 +182,7 @@
 			if(endMinute) endMinute.value='0';
 		}
 		</script>
-		
+		<!--大嶋悠暉　Task27-->
 		<script>
 		document.getElementById('showMessage').addEventListener('click', function (e) {
 				// 1. アラート（または確認）を表示
@@ -191,7 +191,6 @@
 					document.form.submit();
 				} else {
 					e.preventDefault();
-					return false;
 				}
 			});
 	</script>
