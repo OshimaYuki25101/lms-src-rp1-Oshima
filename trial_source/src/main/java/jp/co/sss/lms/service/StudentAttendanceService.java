@@ -472,10 +472,13 @@ public class StudentAttendanceService {
 				}
 				//中抜け時間が勤怠時間を超えていないか
 				if (form.getBlankTime() != null) {
-					int startTime = Integer.parseInt(form.getTrainingStartTime().toString().replace(":", ""));
-					int endTime = Integer.parseInt(form.getTrainingEndTime().toString().replace(":", ""));
+					double startTime = Integer.parseInt(form.getTrainingStartTime().toString().replace(":", ""));
+					double endTime = Integer.parseInt(form.getTrainingEndTime().toString().replace(":", ""));
 
-					int total = (endTime / 10) - (startTime / 10) - 1;
+					double total = (endTime / 100) - (startTime / 100);
+					if(1200<endTime) {
+						total=total-1;
+					}
 					total = total * 60;
 
 					if (total < form.getBlankTime()) {
