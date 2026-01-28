@@ -416,9 +416,8 @@ public class StudentAttendanceService {
 			//備考の入力チェック
 			if (form.getNote().length() > 100) {
 				String note = messageUtil.getMessage("note");
-				String length = "100";
 				result.addError(new FieldError(result.getObjectName(), "attendanceList[" + i + "].note",
-						messageUtil.getMessage("maxlength", new String[] { note, length })));
+						messageUtil.getMessage("maxlength", new String[] { note, "100" })));
 			}
 			//欠席じゃないかどうか
 			if (!Objects.equals(form.getStatusDispName(), "欠席")) {
