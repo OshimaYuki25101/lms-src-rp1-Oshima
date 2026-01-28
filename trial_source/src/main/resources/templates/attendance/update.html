@@ -88,8 +88,6 @@
 											th:selected="${hourTime.key == dailyAttendanceForm.trainingStartTimeHour}">
 											[[${hourTime.value}]]</option>
 									</select>
-									<div th:if="${#fields.hasErrors('attendanceList[__${stat.index}__].trainingStartTimeHour')}"
-										style="background-color: red;"></div>
 								</td>
 								<td>
 									:
@@ -102,8 +100,6 @@
 											th:selected="${minuteTime.key == dailyAttendanceForm.trainingStartTimeMinute}">
 											[[${minuteTime.value}]]</option>
 									</select>
-									<div th:if="${#fields.hasErrors('attendanceList[__${stat.index}__].trainingStartTimeMinute')}"
-										style="background-color: red;"></div>
 								</td>
 								<td class="w70">
 									<select th:name="|attendanceList[${stat.index}].trainingEndTimeHour|" th:id="|endTimeHour_${stat.index}|"
@@ -113,8 +109,6 @@
 											th:selected="${hourTime.key == dailyAttendanceForm.trainingEndTimeHour}">
 											[[${hourTime.value}]]</option>
 									</select>
-									<div th:if="${#fields.hasErrors('attendanceList[__${stat.index}__].trainingEndTimeHour')}"
-										style="background-color: red;"></div>
 								</td>
 								<td>
 									:
@@ -127,8 +121,6 @@
 											th:selected="${minuteTime.key == dailyAttendanceForm.trainingEndTimeMinute}">
 											[[${minuteTime.value}]]</option>
 									</select>
-									<div th:if="${#fields.hasErrors('attendanceList[__${stat.index}__].trainingEndTimeMinute')}"
-										style="background-color: red;"></div>
 								</td>
 								<!--ここまでTask26-->
 								<td class="w80">
@@ -139,16 +131,12 @@
 											th:selected="${blankTime.key == dailyAttendanceForm.blankTime}">
 											[[${blankTime.value}]]</option>
 									</select>
-									<div th:if="${#fields.hasErrors('attendanceList[__${stat.index}__].blankTime')}"
-										style="background-color: red;"></div>
 								</td>
 								<td class="w70">[[${dailyAttendanceForm.statusDispName}]]</td>
 								<td class="w140">
 									<input type="text" th:name="|attendanceList[${stat.index}].note|"
 										th:value="${dailyAttendanceForm.note}" class="form-control"
 										th:errorclass="errorInput"></input>
-									<div th:if="${#fields.hasErrors('attendanceList[__${stat.index}__].note')}"
-										style="background-color: red;"></div>
 								</td>
 							</tr>
 						</th:block>
