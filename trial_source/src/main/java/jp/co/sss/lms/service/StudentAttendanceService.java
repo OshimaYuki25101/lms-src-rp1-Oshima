@@ -412,8 +412,7 @@ public class StudentAttendanceService {
 	 * @param result
 	 */
 	public void updateInputCheck(AttendanceForm attendanceForm, BindingResult result) {
-		Integer count = attendanceForm.getAttendanceList().size();
-		for (int i = 0; i < count; i++) {
+		for (int i = 0; i < attendanceForm.getAttendanceList().size(); i++) {
 			DailyAttendanceForm form = attendanceForm.getAttendanceList().get(i);
 			boolean errorCheck = true;
 			//備考の入力チェック
@@ -421,6 +420,9 @@ public class StudentAttendanceService {
 				String note = messageUtil.getMessage("note");
 				result.addError(new FieldError(result.getObjectName(), "attendanceList[" + i + "].note",
 						messageUtil.getMessage("maxlength", new String[] { note, "100" })));
+			}
+			if (Objects.equals(form.getTrainingStartTime(), null) && Objects.equals(form.getTrainingEndTime(), null)) {
+				continue;
 			}
 			//欠席じゃないかどうか
 			if (!Objects.equals(form.getStatusDispName(), "欠席")) {
@@ -464,12 +466,11 @@ public class StudentAttendanceService {
 									messageUtil.getMessage(Constants.VALID_KEY_ATTENDANCE_PUNCHINEMPTY)));
 					errorCheck = false;
 				}
-				if(!Objects.equals(form.getTrainingStartTime(),null)&&Objects.equals(form.getTrainingEndTime(), null)) {
-					errorCheck=false;
+				if (!Objects.equals(form.getTrainingStartTime(), null)
+						&& Objects.equals(form.getTrainingEndTime(), null)) {
+					errorCheck = false;
 				}
-				if(Objects.equals(form.getTrainingStartTime(), null)&&Objects.equals(form.getTrainingEndTime(), null)) {
-					errorCheck=false;
-				}
+				
 				if (errorCheck) {
 					//出勤時間が退勤時間を超えていないか
 					double startTime = Integer.parseInt(form.getTrainingStartTime().toString().replace(":", ""));
@@ -480,8 +481,7 @@ public class StudentAttendanceService {
 										"attendanceList[" + i + "].trainingStartTime",
 										messageUtil.getMessage(
 												"attendance.trainingTimeRange",
-												new String[] { form.getTrainingStartTime(),
-														form.getTrainingEndTime() })));
+												new String[] { Integer.toString(i) })));
 					}
 					//中抜け時間が勤怠時間を超えていないか
 					if (form.getBlankTime() != null) {
