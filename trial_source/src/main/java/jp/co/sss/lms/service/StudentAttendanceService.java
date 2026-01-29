@@ -387,18 +387,14 @@ public class StudentAttendanceService {
 	public void formatConversion(AttendanceForm attendanceForm) {
 		List<DailyAttendanceForm> dailyAttendance = new ArrayList<DailyAttendanceForm>();
 		for (DailyAttendanceForm form : attendanceForm.getAttendanceList()) {
-			if (form.getTrainingStartTimeHour() == null && form.getTrainingStartTimeMinute() == null) {
-				form.setTrainingStartTime(null);
-			} else {
+			if (form.getTrainingStartTimeHour() != null && form.getTrainingStartTimeMinute() != null) {
 				form.setTrainingStartTime(String.format("%02d", form.getTrainingStartTimeHour()) + ":"
 						+ String.format("%02d", form.getTrainingStartTimeMinute()));
 			}
-			if (form.getTrainingEndTimeHour() == null && form.getTrainingEndTimeMinute() == null) {
-				form.setTrainingEndTime(null);
-			} else {
+			if (form.getTrainingEndTimeHour() != null && form.getTrainingEndTimeMinute() != null) {
 				form.setTrainingEndTime(String.format("%02d", form.getTrainingEndTimeHour()) + ":"
 						+ String.format("%02d", form.getTrainingEndTimeMinute()));
-			}
+			} 
 			dailyAttendance.add(form);
 		}
 		BeanUtils.copyProperties(attendanceForm, dailyAttendance);
@@ -414,7 +410,7 @@ public class StudentAttendanceService {
 	public void updateInputCheck(AttendanceForm attendanceForm, BindingResult result) {
 		for (int i = 0; i < attendanceForm.getAttendanceList().size(); i++) {
 			DailyAttendanceForm form = attendanceForm.getAttendanceList().get(i);
-			boolean errorCheck = true;
+			boolean notErrorCheck = true;
 			//備考の入力チェック
 			if (form.getNote().length() > 100) {
 				String note = messageUtil.getMessage("note");
@@ -432,7 +428,7 @@ public class StudentAttendanceService {
 					result.addError(
 							new FieldError(result.getObjectName(), "attendanceList[" + i + "].trainingStartTimeMinute",
 									messageUtil.getMessage("input.invalid", new String[] { trainingStartTime })));
-					errorCheck = false;
+					notErrorCheck = false;
 				}
 				//出勤時間の時が入力されていない
 				if (form.getTrainingStartTimeHour() == null && form.getTrainingStartTimeMinute() != null) {
@@ -440,7 +436,7 @@ public class StudentAttendanceService {
 					result.addError(
 							new FieldError(result.getObjectName(), "attendanceList[" + i + "].trainingStartTimeHour",
 									messageUtil.getMessage("input.invalid", new String[] { trainingStartTime })));
-					errorCheck = false;
+					notErrorCheck = false;
 				}
 				//退勤時間の分が入力されていない
 				if (form.getTrainingEndTimeHour() != null && form.getTrainingEndTimeMinute() == null) {
@@ -448,7 +444,7 @@ public class StudentAttendanceService {
 					result.addError(
 							new FieldError(result.getObjectName(), "attendanceList[" + i + "].trainingEndTimeMinute",
 									messageUtil.getMessage("input.invalid", new String[] { trainingEndTime })));
-					errorCheck = false;
+					notErrorCheck = false;
 				}
 				//退勤時間の時が入力されていない
 				if (form.getTrainingEndTimeHour() == null && form.getTrainingEndTimeMinute() != null) {
@@ -456,7 +452,7 @@ public class StudentAttendanceService {
 					result.addError(
 							new FieldError(result.getObjectName(), "attendanceList[" + i + "].trainingEndTimeHour",
 									messageUtil.getMessage("input.invalid", new String[] { trainingEndTime })));
-					errorCheck = false;
+					notErrorCheck = false;
 				}
 				//出勤時間が未入力で退勤時間が入力されている
 				if (Objects.equals(form.getTrainingStartTime(), null)
@@ -464,14 +460,14 @@ public class StudentAttendanceService {
 					result.addError(
 							new FieldError(result.getObjectName(), "attendanceList[" + i + "].trainingStartTime",
 									messageUtil.getMessage(Constants.VALID_KEY_ATTENDANCE_PUNCHINEMPTY)));
-					errorCheck = false;
+					notErrorCheck = false;
 				}
 				if (!Objects.equals(form.getTrainingStartTime(), null)
 						&& Objects.equals(form.getTrainingEndTime(), null)) {
-					errorCheck = false;
+					notErrorCheck = false;
 				}
 				
-				if (errorCheck) {
+				if (notErrorCheck) {
 					//出勤時間が退勤時間を超えていないか
 					double startTime = Integer.parseInt(form.getTrainingStartTime().toString().replace(":", ""));
 					double endTime = Integer.parseInt(form.getTrainingEndTime().toString().replace(":", ""));
@@ -481,7 +477,7 @@ public class StudentAttendanceService {
 										"attendanceList[" + i + "].trainingStartTime",
 										messageUtil.getMessage(
 												"attendance.trainingTimeRange",
-												new String[] { Integer.toString(i) })));
+												new String[] { Integer.toString(i+1) })));
 					}
 					//中抜け時間が勤怠時間を超えていないか
 					if (form.getBlankTime() != null) {
