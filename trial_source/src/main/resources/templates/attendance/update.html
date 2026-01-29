@@ -77,12 +77,14 @@
 								<td class="w140">[[${dailyAttendanceForm.sectionName}]]</td>
 								<!--大嶋悠暉　Task28-->
 								<td class="w60">
-									<button type="button" th:onclick="'setTime(' + ${stat.index} + ')'" class="btn btn-success default-button">定時</button>
+									<button type="button" th:onclick="'setTime(' + ${stat.index} + ')'"
+										class="btn btn-success default-button">定時</button>
 								</td>
 								<!--大嶋悠暉　Task26-->
 								<td class="w70">
-								<select th:name="|attendanceList[${stat.index}].trainingStartTimeHour|" th:id="|startTimeHour_${stat.index}|"
-										class="form-control" th:errorclass="errorInput">
+									<select th:name="|attendanceList[${stat.index}].trainingStartTimeHour|"
+										th:id="|startTimeHour_${stat.index}|" class="form-control"
+										th:errorclass="errorInput">
 										<option th:each="hourTime : ${attendanceForm.hourTime}"
 											th:value="${hourTime.key}" th:inlne="text" class="form-control"
 											th:selected="${hourTime.key == dailyAttendanceForm.trainingStartTimeHour}">
@@ -93,8 +95,9 @@
 									:
 								</td>
 								<td class="w70">
-									<select th:name="|attendanceList[${stat.index}].trainingStartTimeMinute|" th:id="|startTimeMinute_${stat.index}|"
-										class="form-control" th:errorclass="errorInput">
+									<select th:name="|attendanceList[${stat.index}].trainingStartTimeMinute|"
+										th:id="|startTimeMinute_${stat.index}|" class="form-control"
+										th:errorclass="errorInput">
 										<option th:each="minuteTime : ${attendanceForm.minuteTime}"
 											th:value="${minuteTime.key}" th:inlne="text" class="form-control"
 											th:selected="${minuteTime.key == dailyAttendanceForm.trainingStartTimeMinute}">
@@ -102,8 +105,9 @@
 									</select>
 								</td>
 								<td class="w70">
-									<select th:name="|attendanceList[${stat.index}].trainingEndTimeHour|" th:id="|endTimeHour_${stat.index}|"
-										class="form-control" th:errorclass="errorInput">
+									<select th:name="|attendanceList[${stat.index}].trainingEndTimeHour|"
+										th:id="|endTimeHour_${stat.index}|" class="form-control"
+										th:errorclass="errorInput">
 										<option th:each="hourTime : ${attendanceForm.hourTime}"
 											th:value="${hourTime.key}" th:inlne="text" class="form-control"
 											th:selected="${hourTime.key == dailyAttendanceForm.trainingEndTimeHour}">
@@ -114,8 +118,9 @@
 									:
 								</td>
 								<td class="w70">
-									<select th:name="|attendanceList[${stat.index}].trainingEndTimeMinute|" th:id="|endTimeMinute_${stat.index}|"
-										class="form-control" th:errorclass="errorInput">
+									<select th:name="|attendanceList[${stat.index}].trainingEndTimeMinute|"
+										th:id="|endTimeMinute_${stat.index}|" class="form-control"
+										th:errorclass="errorInput">
 										<option th:each="minuteTime : ${attendanceForm.minuteTime}"
 											th:value="${minuteTime.key}" th:inlne="text" class="form-control"
 											th:selected="${minuteTime.key == dailyAttendanceForm.trainingEndTimeMinute}">
@@ -158,29 +163,29 @@
 
 	<!--大嶋悠暉　Task28-->
 	<script th:inline="javascript">
-		function setTime(index){
-			const startHour=document.getElementById('startTimeHour_'+index);
-			const startMinute=document.getElementById('startTimeMinute_'+index);
-			const endHour=document.getElementById('endTimeHour_'+index);
-			const endMinute=document.getElementById('endTimeMinute_'+index);
-			
-			if(startHour) startHour.value='9';
-			if(startMinute) startMinute.value='0';
-			if(endHour) endHour.value=/*[[${attendanceForm.hourTime[18]}]]*/'';
-			if(endMinute) endMinute.value='0';
+		function setTime(index) {
+			const startHour = document.getElementById('startTimeHour_' + index);
+			const startMinute = document.getElementById('startTimeMinute_' + index);
+			const endHour = document.getElementById('endTimeHour_' + index);
+			const endMinute = document.getElementById('endTimeMinute_' + index);
+
+			if (startHour) startHour.value = '9';
+			if (startMinute) startMinute.value = '0';
+			if (endHour) endHour.value =/*[[${attendanceForm.hourTime[18]}]]*/'';
+			if (endMinute) endMinute.value = '0';
 		}
-		</script>
-		<!--大嶋悠暉　Task27-->
-		<script>
+	</script>
+	<!--大嶋悠暉　Task27-->
+	<script>
 		document.getElementById('showMessage').addEventListener('click', function (e) {
-				// 1. アラート（または確認）を表示
-				if (window.confirm("更新します。よろしいですか？")) {
-					// 2. OKが押されたらフォームを送信
-					document.form.submit();
-				} else {
-					e.preventDefault();
-				}
-			});
+			// 1. アラート（または確認）を表示
+			if (window.confirm("更新します。よろしいですか？")) {
+				// 2. OKが押されたらフォームを送信
+				document.form.submit();
+			} else {
+				e.preventDefault();
+			}
+		});
 	</script>
 </body>
 

@@ -43,9 +43,6 @@ public class AttendanceController {
 	 * @return 勤怠管理画面
 	 * @throws ParseException
 	 * 
-	 * @author 大嶋悠暉-Task25
-	 * @Date 2026/01/16
-	 * fix:未入力件数を調べるコードを追加
 	 */
 	@RequestMapping(path = "/detail", method = RequestMethod.GET)
 	public String index(Model model) throws ParseException {

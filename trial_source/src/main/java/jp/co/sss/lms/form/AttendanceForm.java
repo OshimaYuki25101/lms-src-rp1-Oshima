@@ -38,6 +38,8 @@ public class AttendanceForm {
 	private LinkedHashMap<Integer,String> hourTime;
 	/**	分(プルダウン)*/
 	private LinkedHashMap<Integer,String> minuteTime;
+	
+	
 	/** 日次の勤怠フォームリスト */
 	private List<DailyAttendanceForm> attendanceList;
 

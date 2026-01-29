@@ -467,6 +467,7 @@ public class StudentAttendanceService {
 					notErrorCheck = false;
 				}
 				
+				//上記チェックがOKなら
 				if (notErrorCheck) {
 					//出勤時間が退勤時間を超えていないか
 					double startTime = Integer.parseInt(form.getTrainingStartTime().toString().replace(":", ""));
