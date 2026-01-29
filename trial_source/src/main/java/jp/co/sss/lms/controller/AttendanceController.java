@@ -151,6 +151,7 @@ public class AttendanceController {
 		//大嶋悠暉　Task26
 		studentAttendanceService.formatConversion(attendanceForm);
 		
+		//大嶋悠暉　Task27
 		studentAttendanceService.updateInputCheck(attendanceForm, result);
 		if (result.hasErrors()) {
 			attendanceForm.setHourTime(attendanceUtil.getHourMap());
